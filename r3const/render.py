@@ -102,5 +102,3 @@ class Render(ShowBase):
 
 def execute():
     app = Render('commands.txt')
-
-    app.run()
