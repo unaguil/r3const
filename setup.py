@@ -8,5 +8,5 @@ setup(
     author_email='unai.aguilera@deusto.es',
     description='Minimal 3d scene manager',
     packages=find_packages(),    
-    install_requires=['panda==1.10.6'],
+    install_requires=['panda3d==1.10.6'],
 )
