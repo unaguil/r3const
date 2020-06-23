@@ -5,7 +5,9 @@ from panda3d.core import LPoint3f
 class Render(ShowBase):
 
     def __init__(self, commands_file):
-        ShowBase.__init__(self, windowType='offscreen')
+        ShowBase.__init__(self)
+
+        self.setBackgroundColor(0, 0, 0)
 
         self.models = []
         self.selectedIndex = -1
@@ -21,18 +23,12 @@ class Render(ShowBase):
         self.accept('z', self.move_y_pos)
         self.accept('x', self.move_y_neg)
 
-        self.accept('s', self.save_image)
-
         self.accept('t', self.exit)
 
         self.step = 0.1
 
         print('Processing file')
         self.process_file(commands_file)
-
-
-    def save_image(self):
-        self.movie(namePrefix='image', duration=1, fps=1, format='png')
 
 
     def addModel(self, model):
@@ -100,15 +96,11 @@ class Render(ShowBase):
                 command = getattr(self, line.strip())
                 command()
 
-            self.save_image()
-
-        
         self.graphicsEngine.renderFrame()
-        self.screenshot("yourfile.png", False)
+        self.screenshot("render.jpg", False)
 
 
 def execute():
     app = Render('commands.txt')
 
-if __name__ == '__main__':
-    execute()
+    app.run()
