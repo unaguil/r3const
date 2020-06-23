@@ -5,7 +5,7 @@ from panda3d.core import LPoint3f
 class Render(ShowBase):
 
     def __init__(self, commands_file):
-        ShowBase.__init__(self)
+        ShowBase.__init__(self, windowType='offscreen')
 
         self.setBackgroundColor(0, 0, 0)
 
