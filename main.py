@@ -5,7 +5,7 @@ from panda3d.core import LPoint3f
 class MyApp(ShowBase):
 
     def __init__(self):
-        ShowBase.__init__(self)
+        ShowBase.__init__(self, windowType='offscreen')
 
         self.models = []
         self.selectedIndex = -1
@@ -90,7 +90,7 @@ class MyApp(ShowBase):
             self.model.setPos(pos + LPoint3f(0, 0, -self.step))
 
 
-    def exit(self):
+    def exit(self, task):
         self.finalizeExit()
 
 
@@ -102,6 +102,8 @@ class MyApp(ShowBase):
 
             self.save_image()
 
+        
+        self.taskMgr.doMethodLater(1, self.exit, 'exit')
 
 
 def main():
