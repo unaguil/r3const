@@ -21,7 +21,18 @@ class MyApp(ShowBase):
         self.accept('z', self.move_y_pos)
         self.accept('x', self.move_y_neg)
 
+        self.accept('s', self.save_image)
+
+        self.accept('t', self.exit)
+
         self.step = 0.1
+
+
+        self.process_file('commands.txt')
+
+
+    def save_image(self):
+        self.movie(namePrefix='image', duration=1, fps=1, format='png')
 
 
     def addModel(self, model):
@@ -79,5 +90,23 @@ class MyApp(ShowBase):
             self.model.setPos(pos + LPoint3f(0, 0, -self.step))
 
 
-app = MyApp()
-app.run()
+    def exit(self):
+        self.finalizeExit()
+
+
+    def process_file(self, file_path):
+        with open(file_path, 'r') as input_file:
+            for line in input_file:
+                command = getattr(self, line.strip())
+                command()
+
+            self.save_image()
+
+
+
+def main():
+    app = MyApp()
+    app.run()
+
+if __name__ == '__main__':
+    main()
