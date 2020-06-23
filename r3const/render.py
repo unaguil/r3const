@@ -2,9 +2,9 @@ from direct.showbase.ShowBase import ShowBase
 from panda3d.core import LPoint3f
 
 
-class MyApp(ShowBase):
+class Render(ShowBase):
 
-    def __init__(self):
+    def __init__(self, commands_file):
         ShowBase.__init__(self, windowType='offscreen')
 
         self.models = []
@@ -28,7 +28,7 @@ class MyApp(ShowBase):
         self.step = 0.1
 
 
-        self.process_file('commands.txt')
+        self.process_file(commands_file)
 
 
     def save_image(self):
@@ -91,11 +91,11 @@ class MyApp(ShowBase):
 
 
     def exit(self, task):
-        self.finalizeExit()
+        self.userExit()
 
 
-    def process_file(self, file_path):
-        with open(file_path, 'r') as input_file:
+    def process_file(self, commands_file):
+        with open(commands_file, 'r') as input_file:
             for line in input_file:
                 command = getattr(self, line.strip())
                 command()
@@ -106,9 +106,14 @@ class MyApp(ShowBase):
         self.taskMgr.doMethodLater(1, self.exit, 'exit')
 
 
-def main():
-    app = MyApp()
-    app.run()
+def execute():
+    app = Render('commands.txt')
+    
+    try:
+        app.run()
+    except SystemExit as e:
+        pass
+
 
 if __name__ == '__main__':
-    main()
+    execute()
