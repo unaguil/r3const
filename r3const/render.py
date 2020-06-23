@@ -27,7 +27,7 @@ class Render(ShowBase):
 
         self.step = 0.1
 
-
+        print('Processing file')
         self.process_file(commands_file)
 
 
@@ -103,17 +103,12 @@ class Render(ShowBase):
             self.save_image()
 
         
-        self.taskMgr.doMethodLater(1, self.exit, 'exit')
+        self.graphicsEngine.renderFrame()
+        self.screenshot("yourfile.png", False)
 
 
 def execute():
     app = Render('commands.txt')
-    
-    try:
-        app.run()
-    except SystemExit as e:
-        pass
-
 
 if __name__ == '__main__':
     execute()
