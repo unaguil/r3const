@@ -35,6 +35,11 @@ class Render(ShowBase):
     def exit(self, task):
         self.userExit()
 
+    
+    def render_to_file(self, output):
+        self.graphicsEngine.renderFrame()
+        self.screenshot(output, False)
+
 
     def render_file(self, commands_file, output='render.jpg'):
         logging.info(f'Rendering file "{commands_file}" to "{output}"')
@@ -46,5 +51,4 @@ class Render(ShowBase):
                 command = line.strip()
                 command_manager.execute(command)
 
-        self.graphicsEngine.renderFrame()
-        self.screenshot(output, False)
+        self.render_to_file(output)
