@@ -1,104 +1,50 @@
 from direct.showbase.ShowBase import ShowBase
-from panda3d.core import LPoint3f
+from r3const.commands import CommandManager
+import logging
 
 
 class Render(ShowBase):
 
-    def __init__(self, commands_file):
+    def __init__(self):
         ShowBase.__init__(self, windowType='offscreen')
 
         self.setBackgroundColor(0, 0, 0)
 
-        self.models = []
-        self.selectedIndex = -1
-        self.model = None
-
-        self.accept('a', self.addSphere)
-        self.accept('r', self.delModel)
-
-        self.accept('arrow_right', self.move_x_pos)
-        self.accept('arrow_left', self.move_x_neg)
-        self.accept('arrow_up', self.move_z_pos)
-        self.accept('arrow_down', self.move_z_neg)
-        self.accept('z', self.move_y_pos)
-        self.accept('x', self.move_y_neg)
-
-        self.accept('t', self.exit)
+        self.__models = []
+        self.__selectedIndex = -1
+        self.__model = None
 
         self.step = 0.1
 
-        print('Processing file')
-        self.process_file(commands_file)
+    
+    def get_model(self):
+        return self.__model
 
 
-    def addModel(self, model):
-        self.models.append(model)
-        self.selectedIndex = len(self.models) - 1
-        self.model = self.models[self.selectedIndex]
+    def add_model(self, model):
+        self.__models.append(model)
+        self.__selectedIndex = len(self.__models) - 1
+        self.__model = self.__models[self.__selectedIndex]
+    
 
-
-    def addSphere(self):
-        model = self.loader.loadModel("smiley.egg")
-        model.reparentTo(self.render)
-        model.setPos(0, 5, 0)
-
-        self.addModel(model)
-
-
-    def delModel(self):
-        if self.model:
-            self.model.detachNode()
-
-
-    def move_x_pos(self):
-        if self.model:
-            pos = self.model.getPos()
-            self.model.setPos(pos + LPoint3f(self.step, 0, 0))
-
-
-    def move_x_neg(self):
-        if self.model:
-            pos = self.model.getPos()
-            self.model.setPos(pos + LPoint3f(-self.step, 0, 0))
-
-
-    def move_y_pos(self):
-        if self.model:
-            pos = self.model.getPos()
-            self.model.setPos(pos + LPoint3f(0, self.step, 0))
-
-
-    def move_y_neg(self):
-        if self.model:
-            pos = self.model.getPos()
-            self.model.setPos(pos + LPoint3f(0, -self.step, 0))
-
-
-    def move_z_pos(self):
-        if self.model:
-            pos = self.model.getPos()
-            self.model.setPos(pos + LPoint3f(0, 0, self.step))
-
-
-    def move_z_neg(self):
-        if self.model:
-            pos = self.model.getPos()
-            self.model.setPos(pos + LPoint3f(0, 0, -self.step))
+    def remove_model(self):
+        if self.__model:
+            self.__model.detachNode()
 
 
     def exit(self, task):
         self.userExit()
 
 
-    def process_file(self, commands_file):
+    def render_file(self, commands_file, output='render.jpg'):
+        logging.info(f'Rendering file "{commands_file}" to "{output}"')
+        command_manager = CommandManager(render=self)
+        logging.info(f'Available commands: {len(command_manager.get_commands())}')
+        
         with open(commands_file, 'r') as input_file:
             for line in input_file:
-                command = getattr(self, line.strip())
-                command()
+                command = line.strip()
+                command_manager.execute(command)
 
         self.graphicsEngine.renderFrame()
-        self.screenshot("render.jpg", False)
-
-
-def execute():
-    app = Render('commands.txt')
+        self.screenshot(output, False)
