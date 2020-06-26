@@ -1,11 +1,14 @@
 from direct.showbase.ShowBase import ShowBase
+from panda3d.core import loadPrcFileData
 from r3const.commands import CommandManager
 import logging
 
 
 class Render(ShowBase):
 
-    def __init__(self):
+    def __init__(self, size=(128, 128)):
+        loadPrcFileData('', f'win-size {size[0]} {size[1]}')
+
         ShowBase.__init__(self, windowType='offscreen')
 
         self.setBackgroundColor(0, 0, 0)

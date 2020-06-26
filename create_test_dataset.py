@@ -15,12 +15,12 @@ if __name__ == '__main__':
     
     dataset_size = int(sys.argv[1])
 
-    render = Render()
+    image_size = (64, 64)
+
+    render = Render(image_size)
     command_manager = CommandManager(render)
 
     print(f'Generating {dataset_size} elements in dataset')
-
-    image_size = (64, 64)
 
     f = h5py.File('test-dataset.hdf5', 'w')
     dataset = f.create_dataset('images', (dataset_size, *image_size, 3), dtype='i')
@@ -40,7 +40,6 @@ if __name__ == '__main__':
         render.render_to_file(output_image)
 
         image = Image.open(output_image)
-        image = image.resize(image_size)
         array = np.asarray(image)
 
         dataset[i] = array
