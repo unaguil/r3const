@@ -9,7 +9,8 @@ class Render(ShowBase):
 
     def __init__(self, size=(128, 128), step=0.1):
         if hasattr(builtins, 'base'):
-            raise self.exit()
+            base = getattr(builtins, 'base') 
+            base.userExit()
 
         loadPrcFileData('', f'win-size {size[0]} {size[1]}')
 
@@ -67,10 +68,6 @@ class Render(ShowBase):
     def remove_model(self):
         if self.__model:
             self.__model.detachNode()
-
-
-    def exit(self, task):
-        self.userExit()
 
     
     def render_to_file(self, output):
