@@ -19,6 +19,14 @@ class Render(ShowBase):
 
         self.step = 0.1
 
+
+    def reset(self):
+        for model in self.__models:
+            model.detachModel()
+        
+        self.__selectedIndex = -1
+        self.__model = None
+
     
     def get_model(self):
         return self.__model
