@@ -6,7 +6,7 @@ import logging
 
 class Render(ShowBase):
 
-    def __init__(self, size=(128, 128)):
+    def __init__(self, size=(128, 128), step=0.1):
         loadPrcFileData('', f'win-size {size[0]} {size[1]}')
 
         ShowBase.__init__(self, windowType='offscreen')
@@ -17,9 +17,20 @@ class Render(ShowBase):
         self.__selectedIndex = -1
         self.__model = None
 
-        self.step = 0.1
+        self.__size = size
+        self.__step = step
 
         self.__command_manager = CommandManager(self)
+
+
+    @property
+    def size(self):
+        return self.__size
+
+    
+    @property
+    def step(self):
+        return self.__step
 
 
     def reset(self):
