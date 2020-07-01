@@ -9,19 +9,25 @@ class CommandNotFound(Exception):
         super().__init__(message)
 
 
-
 class CommandManager:
 
 
     def __init__(self, render):
         self.__r = render
 
+        self.__available_commands = sorted([
+            'add_sphere',
+            'move_x_pos', 'move_x_neg',
+            'move_y_pos', 'move_y_neg',
+            'move_z_pos', 'move_z_neg',
+        ])
+
         members = inspect.getmembers(CommandManager, predicate=inspect.isfunction)
-        self.__commands = {c: f  for c, f in members if not c.startswith('__')}
+        self.__commands = {c: f  for c, f in members if c in self.__available_commands}
 
-
-    def get_commands(self):
-        return self.__commands.keys()
+    @property
+    def commands(self):
+        return self.__available_commands
 
 
     def execute(self, command_name):
@@ -46,7 +52,7 @@ class CommandManager:
         model.reparentTo(self.__r.render)
         self.__r.add_model(model)
 
-
+    
     def move_x_pos(self):
         self.__translate(self.__r.step, 0, 0)
 
@@ -62,7 +68,7 @@ class CommandManager:
     def move_y_neg(self):
         self.__translate(0, -self.__r.step, 0)
 
-
+    
     def move_z_pos(self):
         self.__translate(0, 0, self.__r.step)
 

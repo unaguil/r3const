@@ -47,7 +47,7 @@ class Render(ShowBase):
     def render_file(self, commands_file, output='render.jpg'):
         logging.info(f'Rendering file "{commands_file}" to "{output}"')
         command_manager = CommandManager(render=self)
-        logging.info(f'Available commands: {len(command_manager.get_commands())}')
+        logging.info(f'Available commands: {len(command_manager.commands)}')
         
         with open(commands_file, 'r') as input_file:
             for line in input_file:
