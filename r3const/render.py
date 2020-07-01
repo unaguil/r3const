@@ -1,12 +1,16 @@
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import loadPrcFileData
 from r3const.commands import CommandManager
+import builtins
 import logging
 
 
 class Render(ShowBase):
 
     def __init__(self, size=(128, 128), step=0.1):
+        if hasattr(builtins, 'base'):
+            raise self.exit()
+
         loadPrcFileData('', f'win-size {size[0]} {size[1]}')
 
         ShowBase.__init__(self, windowType='offscreen')
