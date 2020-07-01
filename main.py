@@ -7,3 +7,5 @@ if __name__ == '__main__':
 
     render = Render()
     render.render_file('commands.txt')
+
+    render.reset()

@@ -24,7 +24,7 @@ class Render(ShowBase):
 
     def reset(self):
         for model in self.__models:
-            model.detachModel()
+            model.removeNode()
         
         self.__selectedIndex = -1
         self.__model = None
