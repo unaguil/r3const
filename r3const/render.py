@@ -1,7 +1,7 @@
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import loadPrcFileData
 from r3const.commands import CommandManager
-import builtins
+import numpy as np
 import logging
 
 
@@ -70,8 +70,27 @@ class Render(ShowBase):
         self.graphicsEngine.renderFrame()
         self.screenshot(output, False)
 
+    
+    def render_to_array(self):
+        self.graphicsEngine.renderFrame()
 
-    def render_file(self, commands_file, output='render.jpg'):
+        region = self.camNode.getDisplayRegion(0)
+        texture = region.getScreenshot()
+        
+        data = texture.getRamImageAs('RGB')        
+        array = np.frombuffer(data, np.uint8)
+
+        array.shape = (
+            texture.getXSize(), 
+            texture.getYSize(), 
+            3
+        )
+
+        array = array[::-1] 
+
+        return array
+
+    def execute_file(self, commands_file, output='render.jpg'):
         logging.info(f'Rendering file "{commands_file}" to "{output}"')
         logging.info(f'Available commands: {len(self.commands)}')
         
@@ -79,5 +98,3 @@ class Render(ShowBase):
             for line in input_file:
                 command = line.strip()
                 self.__command_manager.execute(command)
-
-        self.render_to_file(output)
