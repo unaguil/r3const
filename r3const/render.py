@@ -19,6 +19,8 @@ class Render(ShowBase):
 
         self.step = 0.1
 
+        self.__command_manager = CommandManager(self)
+
 
     def reset(self):
         for model in self.__models:
@@ -27,7 +29,11 @@ class Render(ShowBase):
         self.__selectedIndex = -1
         self.__model = None
 
-    
+
+    def execute(self, command):
+        self.__command_manager.execute(command)
+
+
     def get_model(self):
         return self.__model
 
@@ -54,12 +60,11 @@ class Render(ShowBase):
 
     def render_file(self, commands_file, output='render.jpg'):
         logging.info(f'Rendering file "{commands_file}" to "{output}"')
-        command_manager = CommandManager(render=self)
-        logging.info(f'Available commands: {len(command_manager.commands)}')
+        logging.info(f'Available commands: {len(self.__command_manager.commands)}')
         
         with open(commands_file, 'r') as input_file:
             for line in input_file:
                 command = line.strip()
-                command_manager.execute(command)
+                self.__command_manager.execute(command)
 
         self.render_to_file(output)

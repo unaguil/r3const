@@ -1,5 +1,4 @@
 from r3const.render import Render
-from r3const.commands import CommandManager
 from tqdm import tqdm
 from PIL import Image
 import h5py
@@ -18,7 +17,6 @@ if __name__ == '__main__':
     image_size = (64, 64)
 
     render = Render(image_size)
-    command_manager = CommandManager(render)
 
     print(f'Generating {dataset_size} elements in dataset')
 
@@ -27,7 +25,7 @@ if __name__ == '__main__':
 
     output_image = 'render_tmp.jpg'
 
-    command_manager.add_sphere()
+    render.execute('add_sphere')
     for i in tqdm(range(dataset_size)):
         model = render.get_model()
 
