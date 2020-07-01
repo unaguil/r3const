@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='r3const',
-    version='1.0.3',
+    version='1.0.4',
     url='https://github.com/unaguil/r3const.git',
     author='Unai Aguilera',
     author_email='unai.aguilera@deusto.es',
