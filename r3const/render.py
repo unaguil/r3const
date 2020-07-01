@@ -10,7 +10,7 @@ class Render(ShowBase):
     def __init__(self, size=(128, 128), step=0.1):
         if hasattr(builtins, 'base'):
             base = getattr(builtins, 'base') 
-            base.userExit()
+            self.destroy()
 
         loadPrcFileData('', f'win-size {size[0]} {size[1]}')
 
