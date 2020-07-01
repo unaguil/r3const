@@ -8,10 +8,6 @@ import logging
 class Render(ShowBase):
 
     def __init__(self, size=(128, 128), step=0.1):
-        if hasattr(builtins, 'base'):
-            base = getattr(builtins, 'base') 
-            self.destroy()
-
         loadPrcFileData('', f'win-size {size[0]} {size[1]}')
 
         ShowBase.__init__(self, windowType='offscreen')
