@@ -30,6 +30,11 @@ class Render(ShowBase):
         self.__model = None
 
 
+    @property
+    def commands(self):
+        return self.__command_manager.commands
+
+
     def execute(self, command):
         self.__command_manager.execute(command)
 
@@ -60,7 +65,7 @@ class Render(ShowBase):
 
     def render_file(self, commands_file, output='render.jpg'):
         logging.info(f'Rendering file "{commands_file}" to "{output}"')
-        logging.info(f'Available commands: {len(self.__command_manager.commands)}')
+        logging.info(f'Available commands: {len(self.commands)}')
         
         with open(commands_file, 'r') as input_file:
             for line in input_file:
