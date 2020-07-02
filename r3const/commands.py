@@ -50,6 +50,7 @@ class CommandManager:
     def add_sphere(self):
         model = self.__r.loader.loadModel("smiley.egg")
         model.reparentTo(self.__r.render)
+        model.setPos(0, 10, 0)
         self.__r.add_model(model)
 
     
