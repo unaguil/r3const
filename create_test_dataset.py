@@ -23,8 +23,6 @@ if __name__ == '__main__':
     f = h5py.File('test-dataset.hdf5', 'w')
     dataset = f.create_dataset('images', (dataset_size, *image_size, 3), dtype='i')
 
-    output_image = 'render_tmp.jpg'
-
     render.execute('add_sphere')
     for i in tqdm(range(dataset_size)):
         model = render.get_model()
@@ -35,9 +33,6 @@ if __name__ == '__main__':
         
         model.setPos(x_random, y_random, z_random)
 
-        render.render_to_file(output_image)
-
-        image = Image.open(output_image)
-        array = np.asarray(image)
+        array = render.render_to_array()
 
         dataset[i] = array
