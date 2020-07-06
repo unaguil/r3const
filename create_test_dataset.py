@@ -25,14 +25,19 @@ if __name__ == '__main__':
 
     render.execute('add_sphere')
     for i in tqdm(range(dataset_size)):
-        model = render.get_model()
+        invalid = True
 
-        x_random = random.randint(-2, 2)
-        y_random = random.randint(0, 50)
-        z_random = random.randint(-2, 2)
-        
-        model.setPos(x_random, y_random, z_random)
+        while invalid:
+            model = render.get_model()
 
-        array = render.render_to_array()
+            x_random = random.randint(-2, 2)
+            y_random = random.randint(0, 50)
+            z_random = random.randint(-2, 2)
+            
+            model.setPos(x_random, y_random, z_random)
 
-        dataset[i] = array
+            array = render.render_to_array()
+
+            if np.sum(array) > 0:
+                dataset[i] = array
+                invalid = False
