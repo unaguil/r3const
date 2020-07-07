@@ -5,25 +5,6 @@ import inspect
 import logging
 
 
-def reward_mse(a, b):
-  return -np.square(a - b).mean() / np.square(255) 
-
-
-def reward_mae(a, b):
-  return -np.abs(a - b).mean() / 255
-
-
-def reward_iou(a, b):
-  intersection = np.sum(np.logical_and(a, b))
-  union = np.sum(np.logical_or(a, b))
-  iou_score = intersection / union
-  return iou_score
-
-
-def reward_mixed(a, b):
-  return reward_iou(a, b) + reward_mse(a, b)
-
-
 class CommandNotFound(Exception):
 
     def __init__(self, message):
@@ -32,9 +13,10 @@ class CommandNotFound(Exception):
 
 class Environment:
 
-    def __init__(self, render, dataset, max_actions=10, step=0.1):
+    def __init__(self, render, dataset, reward_func, max_actions=10, step=0.1):
         self.__render = render
         self.__dataset = dataset
+        self.__reward_func = reward_func
         self.__max_actions = max_actions
         self.__step = step
 
@@ -63,6 +45,14 @@ class Environment:
     def commands(self):
         return self.__command_ids
 
+    @property
+    def last_command(self):
+        return self.__command_history[-1]
+
+    @property
+    def has_model(self):
+        return self.__render.get_model() is not None
+
     def reset(self):
         self.__command_history = []
         self.__render.reset()
@@ -80,25 +70,24 @@ class Environment:
         return observation
 
     @property
+    def original_img(self):
+        return self.__image
+
+    @property
+    def render_img(self):
+        return self.__output
+    
+    @property
+    def finish(self):
+        return self.__finish
+
+    @property
     def action_space(self):
         return self.__command_ids
 
     @property
     def observation_space(self):
         return (*self.__render.size, 6)
-
-    def __calculate_reward(self):
-        last_command = self.__command_history[-1]
-        
-        if self.__render.get_model() is None:
-            if last_command.startswith('move'):
-                return -1
-
-        iou = reward_iou(self.__image, self.__output)
-        if self.__finish and iou > 0.75:
-            return iou * 10
-
-        return iou
 
     def __execute(self, command_id):
         if command_id not in self.__command_ids:
@@ -110,13 +99,6 @@ class Environment:
         self.__command_history.append(command_id)
         command(self)
 
-        print(f'History: {self.__command_history}')
-
-        reward = self.__calculate_reward()
-        print(f'Reward: {reward}')
-
-        return reward
-
     def step(self, action, render=True):
         command = self.__command_ids[action]
 
@@ -124,7 +106,7 @@ class Environment:
         self.__output = self.__render.render_to_array()
 
         observation = self.observation
-        reward = self.__calculate_reward()
+        reward = self.__reward_func(self)
         is_done = len(self.__command_history) == self.__max_actions or self.__finish
 
         return (observation, reward, is_done)

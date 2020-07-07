@@ -7,6 +7,41 @@ import random
 import sys
 
 
+def reward_mse(a, b):
+  return -np.square(a - b).mean() / np.square(255) 
+
+
+def reward_mae(a, b):
+  return -np.abs(a - b).mean() / 255
+
+
+def reward_iou(a, b):
+  intersection = np.sum(np.logical_and(a, b))
+  union = np.sum(np.logical_or(a, b))
+  iou_score = intersection / union
+  return iou_score
+
+
+def reward_mixed(a, b):
+  return reward_iou(a, b) + reward_mse(a, b)
+
+
+def reward_func(env):
+    if not env.has_model:
+        if env.last_command.startswith('move'):
+            return -1
+    else:
+        if env.last_command is 'add_sphere':
+            return -1
+
+    iou = reward_iou(env.original_img, env.render_img)
+    if env.finish and iou > 0.75:
+        return iou * 10
+        
+
+    return iou
+
+
 def draw_array(display, pos, array):
     array = np.swapaxes(array, 0, 1)
     surface = pygame.surfarray.make_surface(array)
@@ -28,7 +63,7 @@ def main(dataset):
     display = pygame.display.set_mode((w * 2, h))
 
     render = Render(size=(w, h), step=0.2)
-    env = Environment(render, dataset, max_actions=100)
+    env = Environment(render, dataset, reward_func=reward_func, max_actions=100)
 
     obs = env.reset()    
 
@@ -61,6 +96,8 @@ def main(dataset):
 
                 action = env.commands.index(command)
                 obs, reward, done = env.step(action)
+
+                print(f'Reward: {reward}')
 
                 if done:
                     print('Game finished')
