@@ -32,10 +32,11 @@ class CommandNotFound(Exception):
 
 class Environment:
 
-    def __init__(self, render, dataset, max_actions=10):
+    def __init__(self, render, dataset, max_actions=10, step=0.1):
         self.__render = render
         self.__dataset = dataset
         self.__max_actions = max_actions
+        self.__step = step
 
         self.__random = Random()
 
@@ -144,27 +145,27 @@ class Environment:
 
     
     def move_x_pos(self):
-        self.__translate(self.__render.step, 0, 0)
+        self.__translate(self.__step, 0, 0)
 
 
     def move_x_neg(self):
-        self.__translate(-self.__render.step, 0, 0)
+        self.__translate(-self.__step, 0, 0)
 
 
     def move_y_pos(self):
-        self.__translate(0, self.__render.step, 0)
+        self.__translate(0, self.__step, 0)
 
 
     def move_y_neg(self):
-        self.__translate(0, -self.__render.step, 0)
+        self.__translate(0, -self.__step, 0)
 
     
     def move_z_pos(self):
-        self.__translate(0, 0, self.__render.step)
+        self.__translate(0, 0, self.__step)
 
 
     def move_z_neg(self):
-        self.__translate(0, 0, -self.__render.step)
+        self.__translate(0, 0, -self.__step)
 
     def finish(self):
         self.__finish = True

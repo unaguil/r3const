@@ -18,17 +18,11 @@ class Render(ShowBase):
         self.__model = None
 
         self.__size = size
-        self.__step = step
 
 
     @property
     def size(self):
         return self.__size
-
-    
-    @property
-    def step(self):
-        return self.__step
 
 
     def reset(self):
