@@ -3,7 +3,6 @@ from r3const.environment import Environment
 import numpy as np
 import pygame
 import h5py
-import random
 import sys
 
 
