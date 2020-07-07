@@ -27,8 +27,8 @@ def main(dataset):
     pygame.init()
     display = pygame.display.set_mode((w * 2, h))
 
-    render = Render(size=(w, h), step=0.5)
-    env = Environment(render, dataset)
+    render = Render(size=(w, h), step=0.2)
+    env = Environment(render, dataset, max_actions=100)
 
     obs = env.reset()    
 
@@ -56,9 +56,16 @@ def main(dataset):
                     command = 'move_y_neg'
                 if event.key == pygame.K_s:
                     command = 'add_sphere'
+                if event.key == pygame.K_f:
+                    command = 'finish'
 
                 action = env.commands.index(command)
                 obs, reward, done = env.step(action)
+
+                if done:
+                    print('Game finished')
+                    print(f'Final reward: {reward}')
+                    sys.exit()
 
                 original_img = obs[:, :, 0:3]
                 render_img = obs[:, :, 3:6]

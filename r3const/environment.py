@@ -44,12 +44,19 @@ class Environment:
             'move_x_pos', 'move_x_neg',
             'move_y_pos', 'move_y_neg',
             'move_z_pos', 'move_z_neg',
+            'finish'
         ])
 
         members = inspect.getmembers(Environment, predicate=inspect.isfunction)
         self.__command_funcs = {c: f  for c, f in members if c in self.__command_ids}
 
         self.__command_history = []
+
+        self.__finish = False
+
+    @property
+    def render(self):
+        return self.__render
 
     @property
     def commands(self):
@@ -60,6 +67,7 @@ class Environment:
         self.__render.reset()
         self.__image = self.__random.choice(self.__dataset)
         self.__output = self.__render.render_to_array()
+        self.__finish = False
         return self.observation
 
     @property
@@ -79,7 +87,17 @@ class Environment:
         return (*self.__render.size, 6)
 
     def __calculate_reward(self):
-        return reward_mixed(self.__image, self.__output)
+        last_command = self.__command_history[-1]
+        
+        if self.__render.get_model() is None:
+            if last_command.startswith('move'):
+                return -1
+
+        iou = reward_iou(self.__image, self.__output)
+        if self.__finish and iou > 0.75:
+            return iou * 10
+
+        return iou
 
     def __execute(self, command_id):
         if command_id not in self.__command_ids:
@@ -106,7 +124,7 @@ class Environment:
 
         observation = self.observation
         reward = self.__calculate_reward()
-        is_done = len(self.__command_history) == self.__max_actions
+        is_done = len(self.__command_history) == self.__max_actions or self.__finish
 
         return (observation, reward, is_done)
 
@@ -148,5 +166,5 @@ class Environment:
     def move_z_neg(self):
         self.__translate(0, 0, -self.__render.step)
 
-
-
+    def finish(self):
+        self.__finish = True
