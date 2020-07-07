@@ -14,7 +14,7 @@ if __name__ == '__main__':
     
     dataset_size = int(sys.argv[1])
 
-    image_size = (64, 64)
+    image_size = (256, 256)
 
     render = Render(image_size)
 

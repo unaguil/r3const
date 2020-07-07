@@ -1,6 +1,5 @@
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import loadPrcFileData
-from r3const.commands import CommandManager
 import numpy as np
 import logging
 
@@ -21,8 +20,6 @@ class Render(ShowBase):
         self.__size = size
         self.__step = step
 
-        self.__command_manager = CommandManager(self)
-
 
     @property
     def size(self):
@@ -40,15 +37,6 @@ class Render(ShowBase):
         
         self.__selectedIndex = -1
         self.__model = None
-
-
-    @property
-    def commands(self):
-        return self.__command_manager.commands
-
-
-    def execute(self, command):
-        self.__command_manager.execute(command)
 
 
     def get_model(self):
@@ -89,12 +77,3 @@ class Render(ShowBase):
         array = array[::-1] 
 
         return array
-
-    def execute_file(self, commands_file, output='render.jpg'):
-        logging.info(f'Rendering file "{commands_file}" to "{output}"')
-        logging.info(f'Available commands: {len(self.commands)}')
-        
-        with open(commands_file, 'r') as input_file:
-            for line in input_file:
-                command = line.strip()
-                self.__command_manager.execute(command)
