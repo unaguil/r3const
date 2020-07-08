@@ -16,7 +16,6 @@ class Render(ShowBase):
         self.__models = []
         self.__selectedIndex = -1
         self.__model = None
-
         self.__size = size
 
 
@@ -35,6 +34,13 @@ class Render(ShowBase):
 
     def get_model(self):
         return self.__model
+
+
+    def is_visible(self, object):
+        lensBounds = self.cam.node().getLens().makeBounds()
+        bounds = object.getBounds()
+        bounds.xform(object.getParent().getMat(self.cam))
+        return lensBounds.contains(bounds)
 
 
     def add_model(self, model):

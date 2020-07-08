@@ -24,11 +24,14 @@ def reward_iou(a, b):
 def reward_mixed(a, b):
   return reward_iou(a, b) + reward_mse(a, b)
 
-
 def reward_func(env):
     if not env.has_model:
         if env.last_command.startswith('move'):
-            return -1, False
+            return -1.0, False
+    else:
+        model = env.render.get_model()
+        if not env.render.is_visible(model):
+            return -1.0, True
 
     iou = reward_iou(env.original_img, env.render_img)
     if iou > 0.75:
