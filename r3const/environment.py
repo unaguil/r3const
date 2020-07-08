@@ -83,7 +83,7 @@ class Environment:
 
     @property
     def observation_space(self):
-        return ((*self.__render.size, 3), (*self.__render_size, 3))
+        return ((*self.__render.size, 3), (*self.__render.size, 3))
 
     def __execute(self, command_id):
         if command_id not in self.__command_ids:
