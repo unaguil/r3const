@@ -63,11 +63,7 @@ class Environment:
 
     @property
     def observation(self):
-        observation = np.concatenate(
-            (self.__image, self.__output), 
-            axis=2
-        )
-        return observation
+        return (self.__image, self.__output)
 
     @property
     def original_img(self):
@@ -87,7 +83,7 @@ class Environment:
 
     @property
     def observation_space(self):
-        return (*self.__render.size, 6)
+        return ((*self.__render.size, 3), (*self.__render_size, 3))
 
     def __execute(self, command_id):
         if command_id not in self.__command_ids:
