@@ -28,17 +28,14 @@ def reward_mixed(a, b):
 def reward_func(env):
     if not env.has_model:
         if env.last_command.startswith('move'):
-            return -1
-    else:
-        if env.last_command is 'add_sphere':
-            return -1
+            return -1, False
 
     iou = reward_iou(env.original_img, env.render_img)
-    if env.finish and iou > 0.75:
-        return iou * 10
+    if iou > 0.75:
+        return iou * 10, True
         
 
-    return iou
+    return iou, False
 
 
 def draw_array(display, pos, array):
@@ -48,11 +45,8 @@ def draw_array(display, pos, array):
 
 
 def draw_observation(display, image_size, obs):
-    original_img = obs[:, :, 0:3]
-    render_img = obs[:, :, 3:6]
-
-    draw_array(display, (0, 0), original_img)
-    draw_array(display, (image_size[0], 0), render_img)
+    draw_array(display, (0, 0), obs[0])
+    draw_array(display, (image_size[0], 0), obs[1])
 
 
 def main(dataset):
@@ -65,8 +59,6 @@ def main(dataset):
     env = Environment(render, dataset, reward_func=reward_func, max_actions=100)
 
     obs = env.reset()    
-
-    draw_observation(display, (w, h), obs)
 
     running = True
     while running:
@@ -90,8 +82,6 @@ def main(dataset):
                     command = 'move_y_neg'
                 if event.key == pygame.K_s:
                     command = 'add_sphere'
-                if event.key == pygame.K_f:
-                    command = 'finish'
 
                 action = env.commands.index(command)
                 obs, reward, done = env.step(action)
@@ -100,16 +90,9 @@ def main(dataset):
 
                 if done:
                     print('Game finished')
-                    print(f'Final reward: {reward}')
                     sys.exit()
 
-                original_img = obs[:, :, 0:3]
-                render_img = obs[:, :, 3:6]
-                
-                draw_array(display, (0, 0), original_img)
-                draw_array(display, (w, 0), render_img)
-
-
+        draw_observation(display, (w, h), obs)
         pygame.display.flip()
 
 

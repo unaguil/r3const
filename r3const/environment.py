@@ -26,16 +26,13 @@ class Environment:
             'add_sphere',
             'move_x_pos', 'move_x_neg',
             'move_y_pos', 'move_y_neg',
-            'move_z_pos', 'move_z_neg',
-            'finish'
+            'move_z_pos', 'move_z_neg'
         ])
 
         members = inspect.getmembers(Environment, predicate=inspect.isfunction)
         self.__command_funcs = {c: f  for c, f in members if c in self.__command_ids}
 
         self.__command_history = []
-
-        self.__finish = False
 
     @property
     def render(self):
@@ -58,7 +55,6 @@ class Environment:
         self.__render.reset()
         self.__image = self.__random.choice(self.__dataset)
         self.__output = self.__render.render_to_array()
-        self.__finish = False
         return self.observation
 
     @property
@@ -72,10 +68,6 @@ class Environment:
     @property
     def render_img(self):
         return self.__output
-    
-    @property
-    def finish(self):
-        return self.__finish
 
     @property
     def action_space(self):
@@ -102,8 +94,8 @@ class Environment:
         self.__output = self.__render.render_to_array()
 
         observation = self.observation
-        reward = self.__reward_func(self)
-        is_done = len(self.__command_history) == self.__max_actions or self.__finish
+        reward, done = self.__reward_func(self)
+        is_done = done or len(self.__command_history) == self.__max_actions
 
         return (observation, reward, is_done)
 
@@ -144,6 +136,3 @@ class Environment:
 
     def move_z_neg(self):
         self.__translate(0, 0, -self.__step)
-
-    def finish(self):
-        self.__finish = True
