@@ -39,15 +39,15 @@ class Environment:
         return self.__render
 
     @property
-    def commands(self):
+    def available_commands(self):
         return self.__command_ids
 
     @property
-    def last_command(self):
-        return self.__command_history[-1]
+    def command_history(self):
+        return self.__command_history
 
     @property
-    def has_model(self):
+    def has_active_model(self):
         return self.__render.get_model() is not None
 
     def reset(self):

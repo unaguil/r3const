@@ -25,8 +25,8 @@ def reward_mixed(a, b):
   return reward_iou(a, b) + reward_mse(a, b)
 
 def reward_func(env):
-    if not env.has_model:
-        if env.last_command.startswith('move'):
+    if not env.has_active_model:
+        if env.command_history[-1].startswith('move'):
             return -1.0, False
     else:
         model = env.render.get_model()
@@ -36,9 +36,13 @@ def reward_func(env):
     iou = reward_iou(env.original_img, env.render_img)
     if iou > 0.75:
         return iou * 10, True
-        
 
-    return iou, False
+    penalization = 0
+    for command in env.command_history:
+        if command == 'add_sphere':
+            penalization += 1.0
+
+    return iou - penalization, False
 
 
 def draw_array(display, pos, array):
@@ -86,7 +90,7 @@ def main(dataset):
                 if event.key == pygame.K_s:
                     command = 'add_sphere'
 
-                action = env.commands.index(command)
+                action = env.available_commands.index(command)
                 obs, reward, done = env.step(action)
 
                 print(f'Reward: {reward}')
